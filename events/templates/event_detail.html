@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<header class="masthead text-center text-white">
+  <div class="masthead-content">
+    <div class="container">
+        <div class="jumbotron">
+          <h2 class="masthead-subheading mb-0">{{ event.title}} </h2>
+          <table class="table table-striped"> 
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Date</th>
+            <th>Seats</th>
+          </tr>
+            <tr>
+            <td>{{event.title}}</td>
+            <td>{{event.description}}</td>
+            <td>{{event.datetime}}</td>
+            <td>{{event.seats}}</td>
+            {%if request.user == event.organizer  %}
+             <td><a href="{% url 'event-edit' event.id  %}" class="btn btn-outline-primary">Edit event</a></td>
+             {# <td><a href="{% url 'event-delete' classroom.id event.id  %}" class="btn btn-outline-danger">Delete event</a></td> #}
+             {%endif%}
+
+             {%if request.user == event.organizer or not request.user.is_anonymous  %}
+             <td><a href="{% url 'event-booked' event.id  %}" class="btn btn-outline-primary">Book event</a></td>
+             {%endif%}
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="bg-circle-1 bg-circle"></div>
+  <div class="bg-circle-2 bg-circle"></div>
+  <div class="bg-circle-3 bg-circle"></div>
+  <div class="bg-circle-4 bg-circle"></div>
+</header>
+{% endblock %}

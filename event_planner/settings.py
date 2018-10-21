@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'events',
 
     'crispy_forms',
+
+    'datetimewidget' 
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
