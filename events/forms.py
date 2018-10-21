@@ -22,12 +22,18 @@ class EventForm(forms.ModelForm):
 		model = Event
 		exclude = ['organizer']
 
-		widgets = {
-			'datetiem':  forms.DateTimeInput(attrs={'class':'datepicker'}),
+		# widgets = {
+		# 	'date':  forms.DateInput(attrs={'class':'datepicker'}),
  
-		}
+		# }
 
 class BookingForm(forms.ModelForm):
 	class Meta:
 		model = BookedEvent
-		fields = ['event']
+		fields = ['tickets']
+
+		# widgets = {
+		# 	"tickets": forms.NumberInput(attrs={'max_value':get_seat_count()})
+		# }
+		# def get_seat_count(self):
+		# 	return self.model.get_seats()

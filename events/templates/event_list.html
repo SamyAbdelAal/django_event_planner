@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Listof Events{% endblock title %}
+
+{% block content %}
+<header class="masthead text-center text-white">
+  <div class="masthead-content">
+    <div class="container">
+      <div class="jumbotron"> 
+      <form action="{% url 'event-list' %}">
+        <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="Search" aria-label="Search" name="q" value="{{request.GET.q}}">
+          <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="submit">Search</button>
+          </div>
+        </div>
+      </form>
+      <div class="row">
+          {% for event in events %}
+          {% if not event.is_past_due %}
+          <div class="col-md-4">
+              <div class="card my-card" style="background: transparent">
+                <div class="card-body">
+                  <h5 class="card-title">{{event.title}}</h5>
+                  <p class="card-text">
+                    <div class="text-center">
+                      {{event.description|truncatechars:25}}
+                    </div>
+                  </p>
+                </div>
+                <ul class="list-group list-group-flush" style="background: transparent">
+                  <li class="list-group-item text-center">
+                      <a href="{% url 'event-detail' event.id %}" class="btn btn-outline-dark">View</a>
+                  </li>
+                </ul>
+              </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="bg-circle-1 bg-circle"></div>
+<div class="bg-circle-2 bg-circle"></div>
+<div class="bg-circle-3 bg-circle"></div>
+<div class="bg-circle-4 bg-circle"></div>
+</header>
+{% endblock content %}

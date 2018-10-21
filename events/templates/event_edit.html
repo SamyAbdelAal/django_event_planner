@@ -6,7 +6,7 @@
   <div class="masthead-content">
     <div class="container">
         <div class="jumbotron">
-          <h2 class="masthead-subheading mb-0">Log In</h2>
+          <h2 class="masthead-subheading mb-0">Edit event</h2>
           <form action="{% url 'event-edit' event.id %}" method="POST">
             {% csrf_token %}
             {{form|crispy}}

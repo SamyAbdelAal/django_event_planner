@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.views import View
-from .forms import UserSignup, UserLogin, EventForm
+from .forms import *
 from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Q
@@ -64,7 +64,7 @@ class Logout(View):
 		return redirect("login")
 
 def dashboard(request):
-	events = Event.objects.all()
+	events = Event.objects.filter(organizer=request.user)
 	query = request.GET.get('q')
 	if query:
 		events = events.filter(
@@ -73,13 +73,12 @@ def dashboard(request):
 			Q(ogranizer__username__icontains=query)
 		).distinct()
 
-	# favorite_list = []
-	# if request.user.is_authenticated:
-	#     favorite_list = request.user.favoriterestaurant_set.all().values_list('restaurant', flat=True)
+	attended_list = request.user.bookedevent_set.all().values_list('event', flat=True)
+	attnded = Event.objects.filter(id__in=attended_list)
 
 	context = {
 	   "events": events,
-	   # "favorite_list": favorite_list
+	   "attnded": attnded
 	}
 	return render(request, 'dashboard.html', context)
 
@@ -107,7 +106,7 @@ def event_edit(request, event_id):
 		return redirect ('signin')
 	form = EventForm(instance=event)
 	if request.method == "POST":
-		form = EventForm(request.POST, request.FILES or None, instance=event)
+		form = EventForm(request.POST, instance=event)
 		if form.is_valid():
 			form.save()
 			messages.success(request, "Successfully Edited!")
@@ -121,18 +120,50 @@ def event_edit(request, event_id):
 
 def event_detail(request, event_id):
 	event = Event.objects.get(id=event_id)
+	attendees = BookedEvent.objects.filter(event=event)
 	context = {
 		"event": event,
+		"attendees":attendees,
 	}
 	return render(request, 'event_detail.html', context)
 
 def event_booked(request, event_id):
 	event = Event.objects.get(id=event_id)
-	booked_list = []
-	if request.user.is_authenticated:
-		booked_list = request.user.bookedevent_set.all().values_list('event', flat=True)
+	form = BookingForm(instance=BookedEvent)
+	if request.method == "POST":
+		form = BookingForm(request.POST)
+		if form.is_valid():
+			bookedevent = form.save(commit=False)
+			bookedevent.user = request.user
+			bookedevent.event = event
+			# if bookedevent.check_seats():
+			if event.get_seats_remaining() >= bookedevent.tickets:
+				event.seats =int(event.seats- bookedevent.tickets)
+				event.save()
+				bookedevent.save()
+				messages.success(request, "Successfully Booked!")
+				return redirect('event-detail', event_id=event.id)
+			else:
+				messages.info(request, "You exceeded the limit")
+
 	context = {
-		"event": event,
-		"booked_list": booked_list,
+		"form":form,
+		"event":event,
 	}
 	return render(request, 'event_booked.html', context)
+
+
+def event_list(request):
+    events = Event.objects.all()
+    query = request.GET.get('q')
+    if query:
+        events = events.filter(
+            Q(title__icontains=query)|
+            Q(description__icontains=query)|
+            Q(organizer__username__icontains=query)
+        ).distinct()
+
+    context = {
+       "events": events,
+    }
+    return render(request, 'event_list.html', context)
