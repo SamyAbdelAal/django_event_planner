@@ -78,8 +78,8 @@ def dashboard(request):
 
 	# attended_list = request.user.bookedevent_set.all().values_list('event', flat=True)
 	# attnded = Event.objects.filter(id__in=attended_list) # simplfiy
-	attendedevent_list = request.user.bookedevent_set.filter(event__date__lte=timezone.now().date(), event__time__lte=timezone.now().today().time())
-	booked_list = request.user.bookedevent_set.filter(event__date__gte=timezone.now().date(), event__time__lte=timezone.now().today().time())
+	attendedevent_list = request.user.bookedevent_set.filter(event__date__lte=timezone.now(), event__time__lte=timezone.now())
+	booked_list = request.user.bookedevent_set.filter(event__date__gte=timezone.now(), event__time__lte=timezone.now())
 	context = {
 	   "events": events,
 	   "attendedevent_list": attendedevent_list,
