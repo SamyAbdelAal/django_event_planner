@@ -64,6 +64,9 @@ class Logout(View):
 		return redirect("login")
 
 def dashboard(request):
+	if request.user.is_anonymous:
+		return redirect('login')
+
 	events = Event.objects.filter(organizer=request.user)
 	query = request.GET.get('q')
 	if query:
@@ -73,12 +76,14 @@ def dashboard(request):
 			Q(ogranizer__username__icontains=query)
 		).distinct()
 
-	attended_list = request.user.bookedevent_set.all().values_list('event', flat=True)
-	attnded = Event.objects.filter(id__in=attended_list)
-
+	# attended_list = request.user.bookedevent_set.all().values_list('event', flat=True)
+	# attnded = Event.objects.filter(id__in=attended_list) # simplfiy
+	attendedevent_list = request.user.bookedevent_set.filter(event__date__lte=timezone.now().date(), event__time__lte=timezone.now().today().time())
+	booked_list = request.user.bookedevent_set.filter(event__date__gte=timezone.now().date(), event__time__lte=timezone.now().today().time())
 	context = {
 	   "events": events,
-	   "attnded": attnded
+	   "attendedevent_list": attendedevent_list,
+	   "booked_list":booked_list,
 	}
 	return render(request, 'dashboard.html', context)
 
@@ -129,32 +134,25 @@ def event_detail(request, event_id):
 
 def event_booked(request, event_id):
 	event = Event.objects.get(id=event_id)
-	form = BookingForm(instance=BookedEvent)
 	if request.method == "POST":
-		form = BookingForm(request.POST)
-		if form.is_valid():
-			bookedevent = form.save(commit=False)
-			bookedevent.user = request.user
-			bookedevent.event = event
-			# if bookedevent.check_seats():
-			if event.get_seats_remaining() >= bookedevent.tickets:
-				event.seats =int(event.seats- bookedevent.tickets)
-				event.save()
-				bookedevent.save()
-				messages.success(request, "Successfully Booked!")
-				return redirect('event-detail', event_id=event.id)
-			else:
-				messages.info(request, "You exceeded the limit")
+		tickets = int(request.POST.get("tickets"))
+		if event.seats >= int(tickets):
+			event.seats =int(event.seats-tickets)
+			event.save()
+			BookedEvent.objects.create(event=event,user=request.user,tickets=tickets)# pass three parameters
+			messages.success(request, "Successfully Booked!")
+			return redirect('event-detail', event_id=event.id)
+		else:
+			messages.info(request, "You exceeded the limit")
 
 	context = {
-		"form":form,
 		"event":event,
 	}
 	return render(request, 'event_booked.html', context)
 
 
 def event_list(request):
-    events = Event.objects.all()
+    events = Event.objects.filter(date__gte=timezone.now().date(), time__lte=timezone.now().today().time())
     query = request.GET.get('q')
     if query:
         events = events.filter(

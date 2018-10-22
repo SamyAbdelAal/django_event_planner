@@ -4,6 +4,7 @@
 <header class="masthead text-center text-white">
   <div class="masthead-content">
      <h5 class="card-title display-4" style="color: 000034;">Hello {{request.user.username}}</h5>
+     <!--Events made by the user -->
         <div class="container">
           <div class="jumbotron">
               <div class="table-responsive">
@@ -16,6 +17,8 @@
                     <th>Description</th>
                     <th>Date</th>
                     <th>Seats</th>
+                    <th></th>
+                    <th></th>
                   </tr>
                   {% for event in events%}
                     <tr>
@@ -24,19 +27,13 @@
                     <td>{{event.date}}</td>
                     <td>{{event.seats}}</td>
                     {%if request.user == event.organizer  %}
-                    <td><a href="{% url 'event-detail' event.id  %}" class="btn btn-outline-primary">Details</a></td>
-                     <td><a href="{% url 'event-edit' event.id  %}" class="btn btn-outline-primary">Edit event</a></td>
-                     {# <td><a href="{% url 'event-delete' classroom.id event.id  %}" class="btn btn-outline-danger">Delete event</a></td> #}
+                      <td><a href="{% url 'event-detail' event.id  %}" class="btn btn-outline-primary">Details</a></td>
+                       <td><a href="{% url 'event-edit' event.id  %}" class="btn btn-outline-primary">Edit event</a></td>
+                       {# <!-- <td><a href="{% url 'event-delete' classroom.id event.id  %}" class="btn btn-outline-danger">Delete event</a></td> --> #}
                     {%endif%}
                   </tr>
-                  
                   {%endfor%}
                 </table>
-              {# {% if request.user == event.organizer %}
-                <a href="{% url 'student-create' classroom.id %}" class="btn btn-outline-success" ">Create student</a>
-                <a href="{% url 'classroom-update' classroom.id %}" class="btn btn-outline-primary" ">Update</a>
-                <a href="{% url 'classroom-delete' classroom.id %}" class="btn btn-outline-danger">Delete</a>
-                {%endif%} #}
                 </div>
             </div>
 
@@ -45,7 +42,7 @@
 
 
 
-
+            <!--Events attended by the user -->
             <div class="jumbotron">
               <div class="table-responsive">
                   <div class="card-header">
@@ -57,37 +54,30 @@
                     <th>Description</th>
                     <th>Date</th>
                     <th>Seats</th>
+                    <th></th>
+                    <th></th>
                   </tr>
-                  {% for event in events%}
-                    {% if event.is_past_due %}
+                  {% for event in attendedevent_list%}
+                    {# {% if event.is_past_due %} #}
                       <tr>
-                      <td>{{event.title}}</td>
-                      <td>{{event.description}}</td>
-                      <td>{{event.date}}</td>
-                      <td>{{event.seats}}</td>
-                      {%if request.user == event.organizer  %}
-                      <td><a href="{% url 'event-detail' event.id  %}" class="btn btn-outline-primary">Details</a></td>
-                       <td><a href="{% url 'event-edit' event.id  %}" class="btn btn-outline-primary">Edit event</a></td>
-                       {# <td><a href="{% url 'event-delete' classroom.id event.id  %}" class="btn btn-outline-danger">Delete event</a></td> #}
-                      {%endif%}
-                    {%endif%}
-                  </tr>
-                  
+                      <td>{{event.event.title}}</td>
+                      <td>{{event.event.description}}</td>
+                      <td>{{event.event.date}}</td>
+                      <td>{{event.event.seats}}</td>
+                      {%if request.user == event.event.organizer  %}
+                      <td><a href="{% url 'event-detail' event.event.id  %}" class="btn btn-outline-primary">Details</a></td>
+                       <td><a href="{% url 'event-edit' event.event.id  %}" class="btn btn-outline-primary">Edit event</a></td>
+                     {#   <!-- <td><a href="{% url 'event-delete' classroom.id event.id  %}" class="btn btn-outline-danger">Delete event</a></td> --> #}
+                        {%endif%}
+                    {# {%endif%} #}
+                  </tr> 
                   {%endfor%}
                 </table>
-              {# {% if request.user == event.organizer %}
-                <a href="{% url 'student-create' classroom.id %}" class="btn btn-outline-success" ">Create student</a>
-                <a href="{% url 'classroom-update' classroom.id %}" class="btn btn-outline-primary" ">Update</a>
-                <a href="{% url 'classroom-delete' classroom.id %}" class="btn btn-outline-danger">Delete</a>
-                {%endif%} #}
-                </div>
+              </div>
             </div>
 
 
-
-
-
-
+            <!--Events booked by the user -->
             <div class="jumbotron">
               <div class="table-responsive">
                   <div class="card-header">
@@ -99,34 +89,28 @@
                     <th>Description</th>
                     <th>Date</th>
                     <th>Seats</th>
+                    <th></th>
+                    <th></th>
                   </tr>
-                  {% for event in events%}
-                    {% if not event.is_past_due %}
+                  {% for event in booked_list%}
+                    {# {% if not event.is_past_due %} #}
                       <tr>
-                      <td>{{event.title}}</td>
-                      <td>{{event.description}}</td>
-                      <td>{{event.date}}</td>
-                      <td>{{event.seats}}</td>
-                      {%if request.user == event.organizer  %}
-                      <td><a href="{% url 'event-detail' event.id  %}" class="btn btn-outline-primary">Details</a></td>
-                       <td><a href="{% url 'event-edit' event.id  %}" class="btn btn-outline-primary">Edit event</a></td>
-                       {# <td><a href="{% url 'event-delete' classroom.id event.id  %}" class="btn btn-outline-danger">Delete event</a></td> #}
+                      <td>{{event.event.title}}</td>
+                      <td>{{event.event.description}}</td>
+                      <td>{{event.event.date}}</td>
+                      <td>{{event.event.seats}}</td>
+                      {%if request.user == event.event.organizer  %}
+                      <td><a href="{% url 'event-detail' event.event.id  %}" class="btn btn-outline-primary">Details</a></td>
+                       <td><a href="{% url 'event-edit' event.event.id  %}" class="btn btn-outline-primary">Edit event</a></td>
+                       {# <!-- <td><a href="{% url 'event-delete' classroom.id event.id  %}" class="btn btn-outline-danger">Delete event</a></td> --> #}
                       {%endif%}
-                    {%endif%}
+                    {# {%endif%} #}
                   </tr>
-                  
                   {%endfor%}
                 </table>
-              {# {% if request.user == event.organizer %}
-                <a href="{% url 'student-create' classroom.id %}" class="btn btn-outline-success" ">Create student</a>
-                <a href="{% url 'classroom-update' classroom.id %}" class="btn btn-outline-primary" ">Update</a>
-                <a href="{% url 'classroom-delete' classroom.id %}" class="btn btn-outline-danger">Delete</a>
-                {%endif%} #}
-                </div>
-            </div>
-
-
-</div>
+              </div>
+          </div>
+    </div>
 </div>
   <div class="bg-circle-1 bg-circle"></div>
   <div class="bg-circle-2 bg-circle"></div>

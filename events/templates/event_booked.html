@@ -10,7 +10,7 @@
           <h5 class="masthead-subheading mb-0">{{event.seats}} seats left</h5>
           <form action="{% url 'event-booked' event.id %}" method="POST">
             {% csrf_token %}
-            {{form|crispy}}
+            <input type="number" name="tickets" class=" form-control" min=1 max={{event.seats}}>
             <input class = "btn btn-primary btn-xl rounded-pill mt-5" type="submit" value="Book">
           </form>
       </div>

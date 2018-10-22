@@ -1,13 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-from datetime import date
+from datetime import date, datetime
 from django.core.validators import MaxValueValidator , MinValueValidator
 class Event(models.Model):
 	organizer = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
 	title = models.CharField(max_length=120)
 	description = models.TextField()
 	date= models.DateField( null=True,blank=True )
+	time=models.TimeField( null=True, blank=True)
 	seats = models.IntegerField(null=True,blank= True)
 	def __str__(self):
 		return self.title
@@ -23,7 +24,8 @@ class Event(models.Model):
 
 	@property
 	def is_past_due(self):
-	    return date.today() > self.date
+	     return date.today() > self.date and datetime.now().time() > self.time
+
 class BookedEvent(models.Model):
 	event= models.ForeignKey(Event, default=1, on_delete=models.CASCADE)
 	user = models.ForeignKey(User,  default=1, on_delete=models.CASCADE)
@@ -36,4 +38,4 @@ class BookedEvent(models.Model):
 		return self.event.seats
 	
 	def __str__(self):
-		return "Event:%s User:%s" % (self.event.title, self.user.username)
+		return "ID:%s Event:%s User:%s" % (self.id, self.event.title, self.user.username)

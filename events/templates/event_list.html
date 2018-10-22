@@ -9,7 +9,7 @@
       <div class="jumbotron"> 
       <form action="{% url 'event-list' %}">
         <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="Search" aria-label="Search" name="q" value="{{request.GET.q}}">
+          <input type="text" class="form-control" placeholder="Search by title, description or organizer" aria-label="Search" name="q" value="{{request.GET.q}}">
           <div class="input-group-append">
             <button class="btn btn-outline-secondary" type="submit">Search</button>
           </div>
@@ -17,7 +17,7 @@
       </form>
       <div class="row">
           {% for event in events %}
-          {% if not event.is_past_due %}
+         {#  {% if not event.is_past_due %} #}
           <div class="col-md-4">
               <div class="card my-card" style="background: transparent">
                 <div class="card-body">
@@ -35,7 +35,7 @@
                 </ul>
               </div>
           </div>
-        {% endif %}
+        {# {% endif %} #}
       {% endfor %}
         </div>
       </div>

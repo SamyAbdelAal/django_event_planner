@@ -11,6 +11,7 @@
             <th>Name</th>
             <th>Description</th>
             <th>Date</th>
+            <th>Time</th>
             <th>Seats</th>
             <th>Organizer</th>
           </tr>
@@ -18,28 +19,24 @@
             <td>{{event.title}}</td>
             <td>{{event.description}}</td>
             <td>{{event.date}}</td>
+            <td>{{event.time}}</td>
             <td>{{event.seats}}</td>
             <td>{{event.organizer.username}}</td>
             {%if request.user == event.organizer  %}
-             <td><a href="{% url 'event-edit' event.id  %}" class="btn btn-outline-primary">Edit event</a></td>
-             {# <td><a href="{% url 'event-delete' classroom.id event.id  %}" class="btn btn-outline-danger">Delete event</a></td> #}
+               <td><a href="{% url 'event-edit' event.id  %}" class="btn btn-outline-primary">Edit event</a></td>
+               {# <td><a href="{% url 'event-delete' classroom.id event.id  %}" class="btn btn-outline-danger">Delete event</a></td> #}
              {%endif%}
-
              {%if request.user == event.organizer or not request.user.is_anonymous and event.seats != 0  %}
              <td><a href="{% url 'event-booked' event.id  %}" class="btn btn-outline-primary">Book event</a></td>
              {% elif event.is_past_due %}
-             <td><button class="btn btn-outline-primary disabled">Event over</button> 
-
+                <td><button class="btn btn-outline-primary disabled">Event over</button> 
               {% else %}
-               <td><button class="btn btn-outline-primary disabled">Seats full</button> 
-
+               <td><button class="btn btn-outline-primary disabled">Seats full</button>
              {%endif%}
           </tr>
         </table>
       </div>
-
-
-
+    {%if request.user == event.organizer  %}
     <div class="jumbotron">
           <h2 class="masthead-subheading mb-0">Attendees</h2>
           <table class="table table-striped"> 
@@ -53,9 +50,7 @@
           {% endfor %}
         </table>
       </div>
-
-
-
+    {% endif  %}
     </div>
   </div>
   <div class="bg-circle-1 bg-circle"></div>
