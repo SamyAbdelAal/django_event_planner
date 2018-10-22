@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<header class="masthead text-center text-white">
+<header id="event" class="masthead text-center text-white">
   <div class="masthead-content">
     <div class="container">
         <div class="jumbotron">
@@ -29,9 +29,9 @@
              {%if request.user == event.organizer or not request.user.is_anonymous and event.seats != 0  %}
              <td><a href="{% url 'event-booked' event.id  %}" class="btn btn-outline-primary">Book event</a></td>
              {% elif event.is_past_due %}
-                <td><button class="btn btn-outline-primary disabled">Event over</button> 
+                <td><button class="btn btn-outline-primary disabled">Event over</button></td>
               {% else %}
-               <td><button class="btn btn-outline-primary disabled">Seats full</button>
+               <td><button class="btn btn-outline-primary disabled">Seats full</button></td>
              {%endif%}
           </tr>
         </table>
@@ -58,4 +58,5 @@
   <div class="bg-circle-3 bg-circle"></div>
   <div class="bg-circle-4 bg-circle"></div>
 </header>
+
 {% endblock %}

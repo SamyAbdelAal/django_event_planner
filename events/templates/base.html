@@ -16,12 +16,14 @@
         html {
           position: relative;
           min-height: 100%;
+
         }
         body {
-          margin-bottom: 60px;
+            margin-bottom: 60px;
+            background: black;    
         }
         .jumbotron{
-            background-color: black;
+            background-color: rgba(0,0,0,.8);
         }
         .messages{
             position: absolute;
@@ -33,6 +35,10 @@
             position: absolute;
             bottom: 0;
             width: 100%;
+        }
+        .card{
+            background-color:rgba(0,0,0,.8);
+            border: white solid; 
         }
     </style>
   </head>
@@ -53,5 +59,10 @@
 
     <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script>
+      $('.carousel').carousel({
+       interval: 2000
+      });
+    </script>   
   </body>
 </html>

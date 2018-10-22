@@ -1,12 +1,14 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% load static %}
 {% block content %}
-<header class="masthead text-center text-white">
+<header class="masthead text-center text-white" style="  background-image: url({% static './images/bgdash3.jpg' %});  background-size: cover;
+">
   <div class="masthead-content">
     <div class="container">
         <div class="jumbotron">
           <h2 class="masthead-subheading mb-0">Create an event</h2>
-          <form action="{% url 'event-create' %}" method="POST">
+          <form action="{% url 'event-create' %}" method="POST" style="opacity:0.7">
             {% csrf_token %}
             {{form|crispy}}
             <input class = "btn btn-primary btn-xl rounded-pill mt-5" type="submit" value="Create">

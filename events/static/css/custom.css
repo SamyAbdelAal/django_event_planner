@@ -1,4 +1,6 @@
+
 .content{
+
     color: #FFFFFF;
     background: #000; 
     font-size: 26px;
@@ -9,6 +11,7 @@
 
 
 .background{
+
     color: #999999;
     height: 100%;
     width: 100%;
@@ -17,5 +20,15 @@
     top: 0;
     left: 0;
     z-index: -100;
+}
+
+#event{
+  background-image: url("../images/bgdash4.jpg"); 
+  background-size: cover;
+}
+
+#dash{
+  background-image: url("../images/bgdash.jpg"); 
+  background-size: cover;
 }
 
