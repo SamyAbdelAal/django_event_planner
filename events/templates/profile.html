@@ -62,13 +62,16 @@
                         <h3>Welcome back, {{user.username}}</h3>
                         <h4 class="white"><i class="fa fa-check-circle-o"></i>{{user.profile.location}}</h4>
                         <h4 class="white"><i class="fa fa-twitter"></i> Birthday: {{user.profile.birth_date}}</h4>
-                        <button type="button" class="btn btn-labeled btn-info" href="#">
-                            <span class="btn-label"><i class="fa fa-pencil"></i></span>Update</button>
+                        <a type="button" class="btn btn-labeled btn-info" href="{% url 'profile-edit' %}">
+                            <span class="btn-label"><i class="fa fa-pencil"></i></span>Update</a>
                     </div>
                 </div>
-                <div class="col-md-6 no-pad">
-                    <div class="user-image">
-                        <img src="{{user.profile.profile_pic}}" class="img-fluid">
+                <div class="col-md-6 ">
+                    <div class="">
+                      {% if user.profile.profile_pic %}
+                        
+                        <img src="{{user.profile.profile_pic.url}}" class="img-fluid ">
+                      {% endif %}
                     </div>
                 </div>
             </div>

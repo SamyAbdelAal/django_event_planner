@@ -178,8 +178,8 @@ def profile_edit(request):
 	form = UpdateProfile(instance=request.user)
 	profile_form = ProfileForm(instance=request.user.profile)
 	if request.method == "POST":
-		form = UpdateProfile(request.POST,request.FILES, instance=request.user)
-		profile_form = ProfileForm(request.POST, instance=request.user.profile)
+		form = UpdateProfile(request.POST, request.FILES , instance=request.user)
+		profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
 		if form.is_valid() and profile_form.is_valid:	
 			form.save()
 			profile_form.save()
@@ -215,8 +215,8 @@ def change_password(request):
 	}
 	return render(request, 'change_passowrd.html', context)
 
-def profile_detail(request):
-	user_profile = Profile.objects.get(user=request.user)
+def profile_detail(request, user_id):
+	user_profile = Profile.objects.get(user__id=user_id)
 	context = {
 		"user_profile":user_profile,
 	}

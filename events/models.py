@@ -16,19 +16,6 @@ class Event(models.Model):
 	def __str__(self):
 		return self.title
 
-	def get_seats_remaining(self):
-		#booked = BookedEvent.objects.get(event__id=self.id)
-		# if BookedEvent.objects.filter(event__id=self.id).exists() :
-		# 	booked =  BookedEvent.objects.get(event__id=self.id)
-		# 	print(booked)
-		# 	self.seats = self.seats - booked.tickets
-		# 	print(booked.tickets) 
-		return self.seats
-
-	@property
-	def is_past_due(self):
-		 return date.today() > self.date and datetime.now().time() > self.time
-
 class BookedEvent(models.Model):
 	event= models.ForeignKey(Event, default=1, on_delete=models.CASCADE)
 	user = models.ForeignKey(User,  default=1, on_delete=models.CASCADE)
@@ -49,7 +36,7 @@ class Profile(models.Model):
 	location = CountryField()
 	bio = models.TextField(max_length=300, blank=True)
 	birth_date = models.DateField(null=True, blank=True)
-	profile_pic = models.ImageField(default="/media/profile_pic/pic placeholder.png",upload_to='profile_pic', null=True, blank=True)
+	profile_pic = models.ImageField(upload_to='profile_pic', null=True, blank=True)
 
 
 @receiver(post_save, sender=User)
