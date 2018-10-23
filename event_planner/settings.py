@@ -42,7 +42,9 @@ INSTALLED_APPS = [
 
     'crispy_forms',
 
-    'datetimewidget' 
+    'datetimewidget',
+
+    'django_countries',
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

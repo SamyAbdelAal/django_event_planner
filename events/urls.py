@@ -16,6 +16,10 @@ urlpatterns = [
     path('event/<int:event_id>/detail/',views.event_detail ,name='event-detail'),
     path('event/<int:event_id>/booked/',views.event_booked ,name='event-booked'),
     path('event/list',views.event_list ,name='event-list'),
+    path('profile/edit/',views.profile_edit ,name='profile-edit'),
+    path('profile/password_change/',views.change_password ,name='change-password'),
+    path('profile/',views.profile_detail ,name='profile-detail'),
+    path('profile_ex/',views.profile_ex ,name='profile-ex'),
 
 ]
 

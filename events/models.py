@@ -2,7 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 from datetime import date, datetime
-from django.core.validators import MaxValueValidator , MinValueValidator
+from django_countries.fields import CountryField
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
 class Event(models.Model):
 	organizer = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
 	title = models.CharField(max_length=120)
@@ -24,7 +27,7 @@ class Event(models.Model):
 
 	@property
 	def is_past_due(self):
-	     return date.today() > self.date and datetime.now().time() > self.time
+		 return date.today() > self.date and datetime.now().time() > self.time
 
 class BookedEvent(models.Model):
 	event= models.ForeignKey(Event, default=1, on_delete=models.CASCADE)
@@ -39,3 +42,21 @@ class BookedEvent(models.Model):
 	
 	def __str__(self):
 		return "ID:%s Event:%s User:%s" % (self.id, self.event.title, self.user.username)
+
+
+class Profile(models.Model):
+	user = models.OneToOneField(User, default=1, on_delete=models.CASCADE)
+	location = CountryField()
+	bio = models.TextField(max_length=300, blank=True)
+	birth_date = models.DateField(null=True, blank=True)
+	profile_pic = models.ImageField(default="/media/profile_pic/pic placeholder.png",upload_to='profile_pic', null=True, blank=True)
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+	if created:
+		Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+	instance.profile.save()

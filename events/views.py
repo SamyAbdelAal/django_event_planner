@@ -1,5 +1,11 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import (
+	authenticate,
+	login,
+	logout,
+	update_session_auth_hash
+	  )
+from django.contrib.auth.forms import PasswordChangeForm
 from django.views import View
 from .forms import *
 from django.contrib import messages
@@ -152,16 +158,69 @@ def event_booked(request, event_id):
 
 
 def event_list(request):
-    events = Event.objects.filter(date__gte=timezone.now().date(), time__lte=timezone.now().today().time())
-    query = request.GET.get('q')
-    if query:
-        events = events.filter(
-            Q(title__icontains=query)|
-            Q(description__icontains=query)|
-            Q(organizer__username__icontains=query)
-        ).distinct()
+	events = Event.objects.filter(date__gte=timezone.now().date(), time__lte=timezone.now().today().time())
+	query = request.GET.get('q')
+	if query:
+		events = events.filter(
+			Q(title__icontains=query)|
+			Q(description__icontains=query)|
+			Q(organizer__username__icontains=query)
+		).distinct()
 
-    context = {
-       "events": events,
-    }
-    return render(request, 'event_list.html', context)
+	context = {
+	   "events": events,
+	}
+	return render(request, 'event_list.html', context)
+
+def profile_edit(request):
+	if not (request.user.is_staff or not request.user.is_anonymous):
+		return redirect ('signin')
+	form = UpdateProfile(instance=request.user)
+	profile_form = ProfileForm(instance=request.user.profile)
+	if request.method == "POST":
+		form = UpdateProfile(request.POST,request.FILES, instance=request.user)
+		profile_form = ProfileForm(request.POST, instance=request.user.profile)
+		if form.is_valid() and profile_form.is_valid:	
+			form.save()
+			profile_form.save()
+			# profile= form.save(commit=False)
+			# profile.first_name = request.POST.get("first_name")
+			# profile.last_name = request.POST.get("last_name")
+			# profile.email = request.POST.get("email")
+			# profile.set_password(request.POST.get("password"))
+			# profile.save()
+			messages.success(request, "Successfully Edited!")
+			return redirect('dashboard-list')
+		print (form.errors)
+	context = {
+	"form": form,
+	"profile_form":profile_form,
+	}
+	return render(request, 'profile_edit.html', context)
+
+def change_password(request):
+	if request.method == 'POST':
+		form = PasswordChangeForm(request.user, request.POST)
+		if form.is_valid():
+			user = form.save()
+			update_session_auth_hash(request, user)  # Important!
+			messages.success(request, 'Your password was successfully updated!')
+			return redirect('dashboard-list')
+		else:
+			messages.error(request, 'Please correct the error below.')
+	else:
+		form = PasswordChangeForm(request.user)
+	context = {
+		'form': form
+	}
+	return render(request, 'change_passowrd.html', context)
+
+def profile_detail(request):
+	user_profile = Profile.objects.get(user=request.user)
+	context = {
+		"user_profile":user_profile,
+	}
+	return render(request, 'profile.html', context)
+
+def profile_ex(request):
+	return render(request, 'profile_ex.html')

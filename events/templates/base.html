@@ -7,10 +7,14 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Django Event Planner</title>
+     {% block head %}
+        
+    {% endblock head %}
     <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Catamaran:100,200,300,400,500,600,700,800,900" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Lato:100,100i,300,300i,400,400i,700,700i,900,900i" rel="stylesheet">
     <link href="{% static 'css/one-page-wonder.min.css' %}" rel="stylesheet">
+    <link href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css" rel="stylesheet" media="screen">  
     <link href="{% static 'css/custom.css' %}" rel="stylesheet">
     <style>
         html {
@@ -19,7 +23,7 @@
 
         }
         body {
-            margin-bottom: 60px;
+           
             background: black;    
         }
         .jumbotron{
@@ -32,7 +36,7 @@
             width: 100%;
         }
         .footer{
-            position: absolute;
+            position: static;
             bottom: 0;
             width: 100%;
         }
@@ -41,6 +45,7 @@
             border: white solid; 
         }
     </style>
+
   </head>
 
   <body>
@@ -59,10 +64,13 @@
 
     <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <script>
       $('.carousel').carousel({
        interval: 2000
       });
-    </script>   
+    </script>  
+    <script src="{% static './js' %}"></script>  
   </body>
 </html>
