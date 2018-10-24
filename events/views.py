@@ -166,8 +166,8 @@ def event_list(request):
 	print("timezone.now.time:", timezone.now().today().time())
 	#events = Event.objects.filter( date__gte=timezone.now().date())
 	#print("Event time:", (events[0].time))
-	print(timezone.now())
-	events = Event.objects.filter(Q(date=timezone.now().date(),time__gt=timezone.now().today().time())|Q(date__gt=timezone.now().date())).distinct()
+	print(timezone.now().today().date())
+	events = Event.objects.filter(Q(date=timezone.now().today().date(),time__gt=timezone.now().today().time())|Q(date__gt=timezone.now().date())).distinct()
 	booked_list = BookedEvent.objects.filter(event=events)
 	query = request.GET.get('q')
 	if query:
@@ -235,15 +235,24 @@ def profile_detail(request, user_id):
 	forloopcounter = [0,1,2]
 	attendedevent_list= user.bookedevent_set.filter(event__date__range=(thirty_days_ago, today)).order_by('-event__date')[0:3]
 	# attendedevent_list = user.bookedevent_set.filter(event__date__lte=timezone.now(), event__time__lte=timezone.now())
-	following_users = []
-	for follower in Follower.objects.filter(follower = request.user):
-		following_users.append(follower.follower.id)   
-
+	# following_users = []
+	# for user_following in Follower.objects.filter(follower = user):
+	# 	following_users.append(user_following.follower.id)  
+	# followed_users = []
+	# for user_followed_by in Follower.objects.filter(followed = user):
+	# 	followed_users.append(user_followed_by.follower.id)  
+	following_users =Follower.objects.filter(follower = user).count()
+	followed_users = Follower.objects.filter(followed = user).count()
+	likes_by_users = LikedUser.objects.filter(liked = user).count()
 	context = {
 		"user_profile":user_profile,
 		"attendedevent_list":attendedevent_list,
 		"forloopcounter":forloopcounter,
 		"events":events,
+		"following_users":following_users,
+		"followed_users":followed_users,
+		"likes_by_users":likes_by_users,
+
 	}
 	return render(request, 'profile.html', context)
 
@@ -255,12 +264,8 @@ def cancel_event(request,booked_id,event_id):
 	actual_time = timezone.localtime(timezone.now())
 	date_time = datetime.combine(event.date, event.time).replace(tzinfo=KW)
 	can_cancel= date_time - actual_time
-	print(can_cancel)
-	print (days_hours_minutes(can_cancel))
 	# can_cancel = (can_cancel + datetime.hour + can_cancel).time()
-	print(can_cancel)
-	three_hours = (3,0)
-	print (three_hours)
+	three_hours = (0,3,0)
 	if days_hours_minutes(can_cancel) >= three_hours :
 		event.seats = event.seats + bookedevent.tickets
 		event.save()
@@ -273,32 +278,66 @@ def cancel_event(request,booked_id,event_id):
 
 
 def days_hours_minutes(td):
-	return td.seconds//3600, (td.seconds//60)%60
+	return td.days,td.seconds//3600, (td.seconds//60)%60
 
 
 def follow(request,user_id):
 	if request.user.is_anonymous:
 		return redirect('login')
+	if request.user.id==user_id:
+		return redirect('profile-detail', user_id)
 	followed_user = User.objects.get(id=user_id)
-	#f_user = Follower.objects.get(followed=followed_user)
 	f_user , created = Follower.objects.get_or_create(follower= request.user, followed=followed_user)
 	f_Objs = Follower.objects.filter(followed= followed_user).count() 
-	# follower_count= f_Objs.follower_set.all().count()
 	if created:
 		action= "followed"
-		print("followed")
-		messages.success(request,"Followed!")
 	else:
 		action="unfollowed"
-		print("followed")
-
 		f_user.delete()
+		f_Objs = Follower.objects.filter(followed= followed_user).count()
 	data = {
 	"action": action,
 	"f_Objs":f_Objs,
+	"followed_user": followed_user.username,
 	}
 	return JsonResponse(data, safe=False)
-	
-	# Follower.objects.create(follower=request.user, followed=followed_user)	
-	# print(current_user.followers.all())
-	# return redirect('profile-detail', user_id)
+
+
+def like(request,user_id):
+	if request.user.is_anonymous:
+		return redirect('login')
+	liked_user = User.objects.get(id=user_id)
+	l_user , created = LikedUser.objects.get_or_create(liker= request.user, liked=liked_user)
+	l_Objs = LikedUser.objects.filter(liked= liked_user).count() 
+	if created:
+		action= "liked"
+	else:
+		action="unliked"
+		l_user.delete()
+		l_Objs = LikedUser.objects.filter(liked= liked_user).count()
+	data = {
+	"action": action,
+	"l_Objs":l_Objs,
+	"liked_user":liked_user.username,
+	}
+	return JsonResponse(data, safe=False)
+
+def ev_li(request):
+	events = Event.objects.filter(Q(date=timezone.now().today().date(),time__gt=timezone.now().today().time())|Q(date__gt=timezone.now().date())).distinct()
+	booked_list = BookedEvent.objects.filter(event=events)
+	query = request.GET.get('q')
+	if query:
+		events = events.filter(
+			Q(title__icontains=query)|
+			Q(description__icontains=query)|
+			Q(organizer__username__icontains=query)
+		).distinct()
+
+	context = {
+	   "events": events,
+	   "booked_list":booked_list,
+	}
+	return render(request, 'events.html', context)
+
+
+

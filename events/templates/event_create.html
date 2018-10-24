@@ -2,8 +2,7 @@
 {% load crispy_forms_tags %}
 {% load static %}
 {% block content %}
-<header class="masthead text-center text-white" style="  background-image: url({% static './images/bgdash3.jpg' %});  background-size: cover;
-">
+<header class="masthead text-center text-white content" >
   <div class="masthead-content">
     <div class="container">
         <div class="jumbotron">
@@ -16,9 +15,7 @@
       </div>
     </div>
   </div>
-  <div class="bg-circle-1 bg-circle"></div>
-  <div class="bg-circle-2 bg-circle"></div>
-  <div class="bg-circle-3 bg-circle"></div>
-  <div class="bg-circle-4 bg-circle"></div>
+  <video autoplay muted loop id="myVideo">
+  <source src="{% static './videos/forms.mp4' %}" type="video/mp4"></video>
 </header>
 {% endblock %}

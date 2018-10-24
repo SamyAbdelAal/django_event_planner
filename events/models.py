@@ -60,3 +60,13 @@ class Follower(models.Model):
 
 	def __str__(self):
 		return '%s follows %s' % (self.follower.username, self.followed.username)
+
+class LikedUser(models.Model):
+	liker = models.ForeignKey(User, related_name='liking' , on_delete=models.CASCADE)
+	liked = models.ForeignKey(User, related_name='likee' , on_delete=models.CASCADE)
+
+	class Meta:
+		unique_together = ('liker', 'liked')
+
+	def __str__(self):
+		return '%s likes %s' % (self.liker.username, self.liked.username)

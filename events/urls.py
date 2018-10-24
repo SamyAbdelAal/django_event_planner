@@ -21,6 +21,8 @@ urlpatterns = [
     path('profile/<int:user_id>',views.profile_detail ,name='profile-detail'),
     path('event/<int:booked_id>/<int:event_id>/cancel/',views.cancel_event ,name='cancel-event'),
     path('profile/<int:user_id>/follow/',views.follow ,name='profile-follow'),
+    path('profile/<int:user_id>/like/',views.like ,name='profile-like'),
+    path('events/',views.ev_li ,name='ev-li'),
 
 ]
 
