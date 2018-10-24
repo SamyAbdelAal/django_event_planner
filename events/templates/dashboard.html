@@ -3,7 +3,7 @@
 {% block content %}
 <header id="dash" class="masthead text-center text-white dash">
   <div class="masthead-content">
-     <h5 class="card-title display-4" style="color: 000034;">Hello {{request.user.username}}</h5>
+     <h5 class="card-title display-4" style="color:black;">Hello {{request.user.username}}</h5>
      <!--Events made by the user -->
         <div class="container">
           <div id="accordion" >
@@ -15,7 +15,7 @@
                   </button>
                 </h5>
               </div>
-              <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+              <div id="collapseOne" class="collapse " aria-labelledby="headingOne" data-parent="#accordion">
                 <div class="table-responsive">
                   <div class="card-header">
                     Events by You 
@@ -40,6 +40,7 @@
                          <td><a href="{% url 'event-edit' event.id  %}" class="btn btn-outline-light">Edit event</a></td>
                          {# <!-- <td><a href="{% url 'event-delete' classroom.id event.id  %}" class="btn btn-outline-danger">Delete event</a></td> --> #}
                       {%endif%}
+                     
                     </tr>
                   {%endfor%}
                 </table>
@@ -115,6 +116,7 @@
                            <td><a href="{% url 'event-edit' event.event.id  %}" class="btn btn-outline-primary">Edit event</a></td>
                            {# <!-- <td><a href="{% url 'event-delete' classroom.id event.id  %}" class="btn btn-outline-danger">Delete event</a></td> --> #}
                           {%endif%}
+                           <td><a href="{% url 'cancel-event' event.id event.event.id  %}" class="btn btn-outline-danger" onclick="return confirm('Are you sure?')">Cancel</a></td>
                         </tr>
                       {%endfor%}
                     </table>
@@ -127,6 +129,5 @@
     <!--<div class="bg-circle-1 bg-circle"></div>-->
     <div class="bg-circle-2 bg-circle"></div>
     <div class="bg-circle-3 bg-circle"></div>
-    <div class="bg-circle-4 bg-circle"></div>
 </header>
 {% endblock content %}

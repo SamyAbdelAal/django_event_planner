@@ -14,7 +14,7 @@ class Event(models.Model):
 	time=models.TimeField( null=True, blank=True)
 	seats = models.IntegerField(null=True,blank= True)
 	def __str__(self):
-		return self.title
+		return "ID:%s Event:%s " % (self.id, self.title)
 
 class BookedEvent(models.Model):
 	event= models.ForeignKey(Event, default=1, on_delete=models.CASCADE)
@@ -36,8 +36,10 @@ class Profile(models.Model):
 	location = CountryField()
 	bio = models.TextField(max_length=300, blank=True)
 	birth_date = models.DateField(null=True, blank=True)
-	profile_pic = models.ImageField(upload_to='profile_pic', null=True, blank=True)
+	profile_pic = models.ImageField(default="/profile_pic/pic placeholder.png/",upload_to='profile_pic', null=True, blank=True)
 
+	def __str__(self):
+		return "ID:%s User:%s " % (self.id, self.user.username)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -47,3 +49,14 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
 	instance.profile.save()
+
+
+class Follower(models.Model):
+	follower = models.ForeignKey(User, related_name='following', on_delete=models.CASCADE)
+	followed = models.ForeignKey(User, related_name='followers', on_delete=models.CASCADE)
+   
+	class Meta:
+		unique_together = ('follower', 'followed')
+
+	def __str__(self):
+		return '%s follows %s' % (self.follower.username, self.followed.username)
