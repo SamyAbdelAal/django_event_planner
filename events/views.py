@@ -235,6 +235,10 @@ def profile_detail(request, user_id):
 	forloopcounter = [0,1,2]
 	attendedevent_list= user.bookedevent_set.filter(event__date__range=(thirty_days_ago, today)).order_by('-event__date')[0:3]
 	# attendedevent_list = user.bookedevent_set.filter(event__date__lte=timezone.now(), event__time__lte=timezone.now())
+	following_users = []
+	for follower in Follower.objects.filter(follower = request.user):
+		following_users.append(follower.follower.id)   
+
 	context = {
 		"user_profile":user_profile,
 		"attendedevent_list":attendedevent_list,
@@ -242,10 +246,6 @@ def profile_detail(request, user_id):
 		"events":events,
 	}
 	return render(request, 'profile.html', context)
-
-def profile_ex(request):
-	return render(request, 'profile_ex.html')
-
 
 
 def cancel_event(request,booked_id,event_id):
@@ -273,18 +273,32 @@ def cancel_event(request,booked_id,event_id):
 
 
 def days_hours_minutes(td):
-    return td.seconds//3600, (td.seconds//60)%60
+	return td.seconds//3600, (td.seconds//60)%60
 
 
 def follow(request,user_id):
 	if request.user.is_anonymous:
 		return redirect('login')
-	follower = Follower.objects.all()
-	current_user = User.objects.get(id=request.user.id)
 	followed_user = User.objects.get(id=user_id)
-	#current_user.following.create(Follower(followed=followed_user))
-	Follower.objects.create(follower=request.user, followed=followed_user)
-	#current_user.following.save()
-	messages.success(request,"Followed!")
-	print(current_user.followers.all())
-	return redirect('profile-detail', user_id)
+	#f_user = Follower.objects.get(followed=followed_user)
+	f_user , created = Follower.objects.get_or_create(follower= request.user, followed=followed_user)
+	f_Objs = Follower.objects.filter(followed= followed_user).count() 
+	# follower_count= f_Objs.follower_set.all().count()
+	if created:
+		action= "followed"
+		print("followed")
+		messages.success(request,"Followed!")
+	else:
+		action="unfollowed"
+		print("followed")
+
+		f_user.delete()
+	data = {
+	"action": action,
+	"f_Objs":f_Objs,
+	}
+	return JsonResponse(data, safe=False)
+	
+	# Follower.objects.create(follower=request.user, followed=followed_user)	
+	# print(current_user.followers.all())
+	# return redirect('profile-detail', user_id)

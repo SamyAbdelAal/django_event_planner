@@ -19,9 +19,8 @@ urlpatterns = [
     path('profile/edit/',views.profile_edit ,name='profile-edit'),
     path('profile/password_change/',views.change_password ,name='change-password'),
     path('profile/<int:user_id>',views.profile_detail ,name='profile-detail'),
-    path('profile_ex/',views.profile_ex ,name='profile-ex'),
     path('event/<int:booked_id>/<int:event_id>/cancel/',views.cancel_event ,name='cancel-event'),
-    path('profile/<int:user_id>/follow',views.follow ,name='profile-follow'),
+    path('profile/<int:user_id>/follow/',views.follow ,name='profile-follow'),
 
 ]
 
