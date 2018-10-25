@@ -54,6 +54,12 @@
                       <i class="fa fa-envelope-o fa-3x text-center small">Bio</i>
                     </a>
                     <a href="#" class="btn btn-default">
+                      <i class="fa fa-cloud-upload fa-3x text-center small">Followers</i>
+                    </a>      
+                     <a href="#" class="btn btn-default">
+                      <i class="fa fa-cloud-upload fa-3x text-center small">Following</i>
+                    </a>                
+                    <a href="#" class="btn btn-default">
                       <i class="fa fa-cloud-upload fa-3x text-center small">Links</i>
                     </a>
                 </div>
@@ -73,12 +79,44 @@
                       {% endfor %}
                     </ul>
                 </div>
+                
+
+
                 <div class="user-menu-content">
                     <h3>
                           Bio
                     </h3>
                     <div class="border border-warning pb-5 rounded "><h6>{{user_profile.user.profile.bio}}</h6></div>
                 </div>
+              
+                <div class="user-menu-content">
+                    <h3>
+                        Recent Folowers
+                    </h3>
+                    <ul class="user-menu-list">
+                      {% for recent_follower in following_usernames  %}
+                        <li>
+                            <a href="{% url 'profile-detail' recent_follower.follower.id %}"><h4 style="word-wrap: break-word;"><i class="fa fa-user coral"></i> {{recent_follower.follower.username}}</h4></a>
+                        </li>
+                        
+                      {% endfor %}
+                    </ul>
+                </div>
+
+              <div class="user-menu-content">
+                    <h3>
+                         Following
+                    </h3>
+                    <ul class="user-menu-list">
+                      {% for following_who in followed_usernames  %}
+                        <li>
+                            <a href="{% url 'profile-detail' following_who.followed.id %}"><h4 style="word-wrap: break-word;"><i class="fa fa-user coral"></i> {{following_who.followed.username}}</h4></a>
+                        </li>
+                        
+                      {% endfor %}
+                    </ul>
+                </div>
+
                 <div class="user-menu-content">
                     <h2 class="text-center">
                         SHARE THE LOVE

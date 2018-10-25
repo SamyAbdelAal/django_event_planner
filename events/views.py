@@ -15,6 +15,8 @@ from .models import *
 from datetime import datetime,timedelta
 import pytz
 import time
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 def home(request):
@@ -86,10 +88,7 @@ def dashboard(request):
 			Q(ogranizer__username__icontains=query)
 		).distinct()
 
-	# attended_list = request.user.bookedevent_set.all().values_list('event', flat=True)
-	# attnded = Event.objects.filter(id__in=attended_list) # simplfiy
 	attendedevent_list = request.user.bookedevent_set.filter(event__date__lte=timezone.now(), event__time__lte=timezone.now().today().time())
-	#booked_list = request.user.bookedevent_set.filter(event__date__gte=timezone.now(),event__time__gt=timezone.now().time())
 	booked_list = request.user.bookedevent_set.filter(Q(event__date=timezone.now().date(),event__time__gt=timezone.now().today().time())|Q(event__date__gt=timezone.now().date())).distinct()
 	context = {
 	   "events": events,
@@ -101,6 +100,7 @@ def dashboard(request):
 def event_create(request):
 	if request.user.is_anonymous:
 		return redirect('login')
+	following_usernames =Follower.objects.filter(followed = request.user)
 	form = EventForm()
 	if request.method == "POST":
 		form = EventForm(request.POST, request.FILES)
@@ -108,6 +108,13 @@ def event_create(request):
 			event = form.save(commit=False)
 			event.organizer = request.user
 			event.save()
+			for followed_user in following_usernames:
+				send_mail(
+				    '%s has created a new event!'% request.user.username,
+				    '%s has made a new event \n Event information: \n Title: %s \n Description: %s \n Date: %s \n Time: %s \n ' %(request.user.username, event.title,event.description,event.date,event.time) ,
+				    'from@example.com',
+				    [followed_user.follower.email],
+				)
 			return redirect('dashboard-list')
 	context = {
 		"form":form,
@@ -150,8 +157,15 @@ def event_booked(request, event_id):
 		if event.seats >= int(tickets):
 			event.seats =int(event.seats-tickets)
 			event.save()
-			BookedEvent.objects.create(event=event,user=request.user,tickets=tickets)# pass three parameters
-			messages.success(request, "Successfully Booked!")
+			bk = BookedEvent.objects.create(event=event,user=request.user,tickets=tickets)# pass three parameters
+			send_mail(
+					    '%s booking information'% (bk.event.title),
+					    'You successfully booked %s ticket(s) for %s \n Event information: \n Title: %s \n Description: %s \n Date: %s \n Time: %s \n ' %(tickets,bk.event.title, bk.event.title,bk.event.description,bk.event.date,bk.event.time) ,
+					    '',
+					    ['sam.omran@hotmail.com'],
+					    fail_silently=False,
+				)
+			messages.success(request, "Successfully Booked, you should recieve an email!")
 			return redirect('event-detail', event_id=event.id)
 		else:
 			messages.info(request, "You exceeded the limit")
@@ -194,12 +208,6 @@ def profile_edit(request):
 		if form.is_valid() and profile_form.is_valid:	
 			form.save()
 			profile_form.save()
-			# profile= form.save(commit=False)
-			# profile.first_name = request.POST.get("first_name")
-			# profile.last_name = request.POST.get("last_name")
-			# profile.email = request.POST.get("email")
-			# profile.set_password(request.POST.get("password"))
-			# profile.save()
 			messages.success(request, "Successfully Edited!")
 			return redirect('dashboard-list')
 		print (form.errors)
@@ -234,16 +242,11 @@ def profile_detail(request, user_id):
 	thirty_days_ago = today - timedelta(days=30) 
 	forloopcounter = [0,1,2]
 	attendedevent_list= user.bookedevent_set.filter(event__date__range=(thirty_days_ago, today)).order_by('-event__date')[0:3]
-	# attendedevent_list = user.bookedevent_set.filter(event__date__lte=timezone.now(), event__time__lte=timezone.now())
-	# following_users = []
-	# for user_following in Follower.objects.filter(follower = user):
-	# 	following_users.append(user_following.follower.id)  
-	# followed_users = []
-	# for user_followed_by in Follower.objects.filter(followed = user):
-	# 	followed_users.append(user_followed_by.follower.id)  
 	following_users =Follower.objects.filter(follower = user).count()
 	followed_users = Follower.objects.filter(followed = user).count()
 	likes_by_users = LikedUser.objects.filter(liked = user).count()
+	following_usernames =Follower.objects.filter(followed = user)[0:3]
+	followed_usernames =Follower.objects.filter(follower = user)
 	context = {
 		"user_profile":user_profile,
 		"attendedevent_list":attendedevent_list,
@@ -252,6 +255,8 @@ def profile_detail(request, user_id):
 		"following_users":following_users,
 		"followed_users":followed_users,
 		"likes_by_users":likes_by_users,
+		"following_usernames":following_usernames,
+		"followed_usernames":followed_usernames,
 
 	}
 	return render(request, 'profile.html', context)
@@ -325,6 +330,7 @@ def like(request,user_id):
 def ev_li(request):
 	events = Event.objects.filter(Q(date=timezone.now().today().date(),time__gt=timezone.now().today().time())|Q(date__gt=timezone.now().date())).distinct()
 	booked_list = BookedEvent.objects.filter(event=events)
+	user = User.objects.all()
 	query = request.GET.get('q')
 	if query:
 		events = events.filter(
