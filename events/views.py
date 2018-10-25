@@ -274,6 +274,13 @@ def cancel_event(request,booked_id,event_id):
 	if days_hours_minutes(can_cancel) >= three_hours :
 		event.seats = event.seats + bookedevent.tickets
 		event.save()
+		send_mail(
+			    '%s canceled from %s'% (request.user.username, bookedevent.event.title),
+			    '%s has canceled %s ticket(s) for %s ' %(request.user.username,bookedevent.tickets,bookedevent.event.title) ,
+			    '',
+			    ['sam.omran@hotmail.com'],
+			    fail_silently=False,
+				)
 		bookedevent.delete()
 		messages.success(request, 'Your booking was successfully canceled!')
 		return redirect("dashboard-list")	

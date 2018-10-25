@@ -197,7 +197,7 @@
             success: function(data){
                 if (data.action === "followed"){
                     $(count_id).text(data.f_Objs);
-                    alert("You followed " + data.followed_user.username)
+                    alert("You followed " + data.followed_user)
                 }
                 else{
                     $(count_id).text(data.f_Objs);
