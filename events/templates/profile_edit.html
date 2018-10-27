@@ -4,15 +4,15 @@
 <header id="dash" class="masthead text-center text-white">
   <div class="masthead-content">
     <div class="container">
-        <div class="jumbotron">
-          <h2 class="masthead-subheading mb-0">Edit profile</h2>
-          <form action="{% url 'profile-edit' %}" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{form|crispy}}
-            {{profile_form|crispy}}
-            <input class = "btn btn-primary btn-xl rounded-pill mt-5" type="submit" value="Edit">
-          </form>
-           <a  href="{% url 'change-password' %}">change password</a>
+      <div class="jumbotron">
+        <h2 class="masthead-subheading mb-0">Edit profile</h2>
+        <form action="{% url 'profile-edit' %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{form|crispy}}
+          {{profile_form|crispy}}
+          <input class = "btn btn-primary btn-xl rounded-pill mt-5" type="submit" value="Edit">
+        </form>
+        <a id="btn" href="{% url 'change-password' %}">change password</a>
       </div>
     </div>
   </div>

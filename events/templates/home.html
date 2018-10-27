@@ -4,9 +4,8 @@
 <header class="masthead text-center text-white content">
   <div class="masthead-content">
     <div class="container" >
-
-      <h1 class="masthead-heading mb-0 " >ALL THE EVENTS</h1>
-      <h2 class="masthead-subheading mb-0 ">You could ever imagine!</h2>
+      <h1 class="masthead-heading mb-0 " >VENT OFF </h1>
+      <h2 class="masthead-subheading mb-0 ">See whats happening!</h2>
       {% if request.user.is_anonymous %}
         <a href="{% url 'signup' %}" class="btn btn-primary btn-xl rounded-pill mt-5">Sign up to find events!</a>
       {% else %}
@@ -14,15 +13,8 @@
       {% endif %}
     </div>
   </div>
-  
-    <video autoplay muted loop id="myVideo" style=" filter: blur(8px);
-  -webkit-filter: blur(8px);">
-      <source src="{% static './videos/front.mp4' %}" type="video/mp4" ></video>
-<!--{#   <div class="bg-circle-1 bg-circle"></div>
-  <div class="bg-circle-2 bg-circle"></div>
-  <div class="bg-circle-3 bg-circle"></div>
-  <div class="bg-circle-4 bg-circle"></div> #}-->
+  <video autoplay muted loop id="myVideo" style=" filter: blur(8px);
+-webkit-filter: blur(8px);">
+  <source src="{% static './videos/front.mp4' %}" type="video/mp4" ></video>
 </header>
-
-
 {% endblock %}

@@ -78,18 +78,27 @@ class Logout(View):
 def dashboard(request):
 	if request.user.is_anonymous:
 		return redirect('login')
-
 	events = Event.objects.filter(organizer=request.user)
 	query = request.GET.get('q')
+	attendedevent_list = request.user.bookedevent_set.filter(event__date__lte=timezone.now(), event__time__lte=timezone.now().today().time())
+	booked_list = request.user.bookedevent_set.filter(Q(event__date=timezone.now().date(),event__time__gt=timezone.now().today().time())|Q(event__date__gt=timezone.now().date())).distinct()
+
 	if query:
 		events = events.filter(
 			Q(title__icontains=query)|
 			Q(description__icontains=query)|
-			Q(ogranizer__username__icontains=query)
+			Q(organizer__username__icontains=query)
 		).distinct()
-
-	attendedevent_list = request.user.bookedevent_set.filter(event__date__lte=timezone.now(), event__time__lte=timezone.now().today().time())
-	booked_list = request.user.bookedevent_set.filter(Q(event__date=timezone.now().date(),event__time__gt=timezone.now().today().time())|Q(event__date__gt=timezone.now().date())).distinct()
+		attendedevent_list = attendedevent_list.filter(
+			Q(event__title__icontains=query)|
+			Q(event__description__icontains=query)|
+			Q(event__organizer__username__icontains=query)
+		).distinct()
+		booked_list = booked_list.filter(
+			Q(event__title__icontains=query)|
+			Q(event__description__icontains=query)|
+			Q(event__organizer__username__icontains=query)
+		).distinct()
 	context = {
 	   "events": events,
 	   "attendedevent_list": attendedevent_list, 
@@ -100,7 +109,7 @@ def dashboard(request):
 def event_create(request):
 	if request.user.is_anonymous:
 		return redirect('login')
-	following_usernames =Follower.objects.filter(followed = request.user)
+	following_usernames =Follower.objects.filter(followed = request.user) #get followers to send mass emails
 	form = EventForm()
 	if request.method == "POST":
 		form = EventForm(request.POST, request.FILES)
@@ -151,6 +160,8 @@ def event_detail(request, event_id):
 	return render(request, 'event_detail.html', context)
 
 def event_booked(request, event_id):
+	if request.user.is_anonymous:
+		return redirect('signin')
 	event = Event.objects.get(id=event_id)
 	if request.method == "POST":
 		tickets = int(request.POST.get("tickets"))
@@ -160,7 +171,9 @@ def event_booked(request, event_id):
 			bk = BookedEvent.objects.create(event=event,user=request.user,tickets=tickets)# pass three parameters
 			send_mail(
 					    '%s booking information'% (bk.event.title),
-					    'You successfully booked %s ticket(s) for %s \n Event information: \n Title: %s \n Description: %s \n Date: %s \n Time: %s \n ' %(tickets,bk.event.title, bk.event.title,bk.event.description,bk.event.date,bk.event.time) ,
+					    'You successfully booked %s ticket(s) for %s \n \
+					    Event information: \n Title: %s \n Description: %s \n Date: %s \n Time: %s \n ' 
+					    %(tickets,bk.event.title, bk.event.title,bk.event.description,bk.event.date,bk.event.time) ,
 					    '',
 					    ['sam.omran@hotmail.com'],
 					    fail_silently=False,
@@ -176,39 +189,18 @@ def event_booked(request, event_id):
 	return render(request, 'event_booked.html', context)
 
 
-def event_list(request):
-	print("timezone.now.time:", timezone.now().today().time())
-	#events = Event.objects.filter( date__gte=timezone.now().date())
-	#print("Event time:", (events[0].time))
-	print(timezone.now().today().date())
-	events = Event.objects.filter(Q(date=timezone.now().today().date(),time__gt=timezone.now().today().time())|Q(date__gt=timezone.now().date())).distinct()
-	booked_list = BookedEvent.objects.filter(event=events)
-	query = request.GET.get('q')
-	if query:
-		events = events.filter(
-			Q(title__icontains=query)|
-			Q(description__icontains=query)|
-			Q(organizer__username__icontains=query)
-		).distinct()
-
-	context = {
-	   "events": events,
-	   "booked_list":booked_list,
-	}
-	return render(request, 'event_list.html', context)
-
 def profile_edit(request):
-	if not (request.user.is_staff or not request.user.is_anonymous):
+	if  not request.user.is_staff or request.user.is_anonymous:
 		return redirect ('signin')
-	form = UpdateProfile(instance=request.user)
+	form = UpdateProfileForm(instance=request.user)
 	profile_form = ProfileForm(instance=request.user.profile)
 	if request.method == "POST":
-		form = UpdateProfile(request.POST, request.FILES , instance=request.user)
+		form = UpdateProfileForm(request.POST, request.FILES , instance=request.user)
 		profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
 		if form.is_valid() and profile_form.is_valid:	
 			form.save()
 			profile_form.save()
-			messages.success(request, "Successfully Edited!")
+			messages.success(request, "Successfully edited your profile!")
 			return redirect('dashboard-list')
 		print (form.errors)
 	context = {
@@ -218,6 +210,8 @@ def profile_edit(request):
 	return render(request, 'profile_edit.html', context)
 
 def change_password(request):
+	if request.user.is_anonymous or not request.user.is_staff:
+		return redirect("signin")
 	if request.method == 'POST':
 		form = PasswordChangeForm(request.user, request.POST)
 		if form.is_valid():
@@ -240,7 +234,6 @@ def profile_detail(request, user_id):
 	events = Event.objects.filter(organizer=user)
 	today = datetime.today() 
 	thirty_days_ago = today - timedelta(days=30) 
-	forloopcounter = [0,1,2]
 	attendedevent_list= user.bookedevent_set.filter(event__date__range=(thirty_days_ago, today)).order_by('-event__date')[0:3]
 	following_users =Follower.objects.filter(follower = user).count()
 	followed_users = Follower.objects.filter(followed = user).count()
@@ -250,7 +243,6 @@ def profile_detail(request, user_id):
 	context = {
 		"user_profile":user_profile,
 		"attendedevent_list":attendedevent_list,
-		"forloopcounter":forloopcounter,
 		"events":events,
 		"following_users":following_users,
 		"followed_users":followed_users,
@@ -266,10 +258,9 @@ def cancel_event(request,booked_id,event_id):
 	KW=pytz.timezone('Asia/Kuwait')
 	bookedevent = BookedEvent.objects.get(id=booked_id)
 	event = Event.objects.get(id=event_id)
-	actual_time = timezone.localtime(timezone.now())
-	date_time = datetime.combine(event.date, event.time).replace(tzinfo=KW)
+	actual_time = timezone.now().today()
+	date_time = datetime.combine(event.date, event.time)
 	can_cancel= date_time - actual_time
-	# can_cancel = (can_cancel + datetime.hour + can_cancel).time()
 	three_hours = (0,3,0)
 	if days_hours_minutes(can_cancel) >= three_hours :
 		event.seats = event.seats + bookedevent.tickets
@@ -298,6 +289,7 @@ def follow(request,user_id):
 		return redirect('login')
 	if request.user.id==user_id:
 		return redirect('profile-detail', user_id)
+		messages.info(request,"You can't follow yoursrlf, silly!")
 	followed_user = User.objects.get(id=user_id)
 	f_user , created = Follower.objects.get_or_create(follower= request.user, followed=followed_user)
 	f_Objs = Follower.objects.filter(followed= followed_user).count() 

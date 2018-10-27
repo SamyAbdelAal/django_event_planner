@@ -32,7 +32,7 @@ class BookingForm(forms.ModelForm):
 		model = BookedEvent
 		fields = ['tickets']
 
-class UpdateProfile(forms.ModelForm):
+class UpdateProfileForm(forms.ModelForm):
 	class Meta:
 		model = User
 		fields = ['first_name', 'last_name', 'email']

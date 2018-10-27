@@ -10,8 +10,8 @@ class Event(models.Model):
 	organizer = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
 	title = models.CharField(max_length=120)
 	description = models.TextField()
-	date= models.DateField( null=True,blank=True )
-	time=models.TimeField( null=True, blank=True)
+	date= models.DateField()
+	time=models.TimeField()
 	seats = models.IntegerField(null=True,blank= True)
 	def __str__(self):
 		return "ID:%s Event:%s " % (self.id, self.title)

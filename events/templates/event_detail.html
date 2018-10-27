@@ -4,9 +4,9 @@
 <header id="event" class="masthead text-center text-white">
   <div class="masthead-content">
     <div class="container">
-        <div class="jumbotron">
-          <h2 class="masthead-subheading mb-0">{{ event.title}} </h2>
-          <table class="table table-striped table-responsive"> 
+      <div class="jumbotron">
+        <h2 class="masthead-subheading mb-0">{{ event.title}} </h2>
+        <table class="table table-striped table-responsive"> 
           <tr>
             <th>Name</th>
             <th>Description</th>
@@ -15,7 +15,7 @@
             <th>Seats</th>
             <th>Organizer</th>
           </tr>
-            <tr>
+          <tr>
             <td>{{event.title}}</td>
             <td>{{event.description}}</td>
             <td>{{event.date}}</td>
@@ -23,35 +23,33 @@
             <td>{{event.seats}}</td>
             <td><a href="{% url 'profile-detail' event.organizer.id  %}">{{event.organizer.username}}</a></td>
             {%if request.user == event.organizer  %}
-               <td><a href="{% url 'event-edit' event.id  %}" class="btn btn-outline-primary">Edit event</a></td>
-               {# <td><a href="{% url 'event-delete' classroom.id event.id  %}" class="btn btn-outline-danger">Delete event</a></td> #}
-             {%endif%}
-             {%if request.user == event.organizer or not request.user.is_anonymous and event.seats != 0  %}
+             <td><a href="{% url 'event-edit' event.id  %}" class="btn btn-outline-primary">Edit event</a></td>
+            {%endif%}
+            {%if request.user == event.organizer or not request.user.is_anonymous and event.seats != 0  %}
              <td><a href="{% url 'event-booked' event.id  %}" class="btn btn-outline-primary">Book event</a></td>
-             {% elif event.is_past_due %}
-                <td><button class="btn btn-outline-primary disabled">Event over</button></td>
-              {% else %}
-               <td><button class="btn btn-outline-primary disabled">Seats full</button></td>
-             {%endif%}
-            <!-- {#   <td><a href="{% url 'cancel-event' event.id  %}" class="btn btn-outline-danger ">Cancel Booking</a></td> #} -->
+            {% elif event.is_past_due %}
+              <td><button class="btn btn-outline-primary disabled">Event over</button></td>
+            {% else %}
+             <td><button class="btn btn-outline-primary disabled">Seats full</button></td>
+            {%endif%}
           </tr>
         </table>
       </div>
     {%if request.user == event.organizer  %}
     <div class="jumbotron">
-          <h2 class="masthead-subheading mb-0">Attendees</h2>
-          <table class="table table-striped"> 
+      <h2 class="masthead-subheading mb-0">Attendees</h2>
+      <table class="table table-striped"> 
+        <tr>
+          <th>Name</th>
+        </tr>
+        {% for attendee in attendees  %}
           <tr>
-            <th>Name</th>
-          </tr>
-          {% for attendee in attendees  %}
-            <tr>
-            <td>{{attendee.user.username}}</td>
-          </tr>
-          {% endfor %}
+          <td>{{attendee.user.username}}</td>
+        </tr>
+        {% endfor %}
         </table>
       </div>
-    {% endif  %}
+    {% endif %}
     </div>
   </div>
   <div class="bg-circle-2 bg-circle"></div>

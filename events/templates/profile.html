@@ -14,55 +14,52 @@
                     <h4 class="white"><i class="fa fa-check-circle-o"></i>{{user_profile.user.profile.location}}</h4>
                     <h4 class="white"><i class="fa fa-twitter"></i> Birthday: {{user_profile.user.profile.birth_date}}</h4>
                     {% if request.user.id == user_profile.user.id %}
-                      
-                    
                     <a type="button" class="btn btn-labeled btn-info" href="{% url 'profile-edit' %}">
                     <span class="btn-label"><i class="fa fa-pencil"></i></span>Update</a>
                     {% endif %}
                 </div>
               </div>
-                <div class="col-md-6 ">
-                    <div class="">
-                      {% if user_profile.user.profile.profile_pic %}
-                        
-                        <img src="{{user_profile.user.profile.profile_pic.url}}" class="img-fluid my-4 border">
-                      {% endif %}
-                    </div>
-                </div>
-            </div>
-              <div class="row overview">
-                  <div class="col-md-4 user-pad text-center">
-                      <h6 style="word-wrap: break-word; color:black;">FOLLOWERS</h6>
-                      <h4 id="followers-{{user_profile.user.id}}">{{followed_users}}</h4>
-                  </div>
-                  <div class="col-md-4 user-pad text-center">
-                      <h6  style="word-wrap: break-word; color:black;">FOLLOWING</h6>
-                      <h4 id="followed-{{user_profile.user.id}}">{{following_users}}</h4>
-                  </div>
-                  <div class="col-md-4 user-pad text-center">
-                      <h6  style="word-wrap: break-word; color:black;">APPRECIATIONS</h6>
-                      <h4 id="likes-{{user_profile.user.id}}">{{likes_by_users}}</h4>
+              <div class="col-md-6 ">
+                  <div class="">
+                    {% if user_profile.user.profile.profile_pic %}
+                      <img src="{{user_profile.user.profile.profile_pic.url}}" class="img-fluid my-4 border">
+                    {% endif %}
                   </div>
               </div>
-          </div>
-            <div class="col-md-1 user-menu-btns">
-                <div class="btn-group-vertical square" id="responsive">
-                    <a href="#" class="btn btn-block btn-default active  ">
-                      <i class="fa fa-bell-o fa-3x text-center small">Activities</i>
-                    </a>
-                    <a href="#" class="btn btn-default">
-                      <i class="fa fa-envelope-o fa-3x text-center small">Bio</i>
-                    </a>
-                    <a href="#" class="btn btn-default">
-                      <i class="fa fa-cloud-upload fa-3x text-center small">Followers</i>
-                    </a>      
-                     <a href="#" class="btn btn-default">
-                      <i class="fa fa-cloud-upload fa-3x text-center small">Following</i>
-                    </a>                
-                    <a href="#" class="btn btn-default">
-                      <i class="fa fa-cloud-upload fa-3x text-center small">Links</i>
-                    </a>
+            </div>
+            <div class="row overview">
+                <div class="col-md-4 user-pad text-center">
+                    <h6 style="word-wrap: break-word; color:black;">FOLLOWERS</h6>
+                    <h4 id="followers-{{user_profile.user.id}}">{{followed_users}}</h4>
                 </div>
+                <div class="col-md-4 user-pad text-center">
+                    <h6  style="word-wrap: break-word; color:black;">FOLLOWING</h6>
+                    <h4 id="followed-{{user_profile.user.id}}">{{following_users}}</h4>
+                </div>
+                <div class="col-md-4 user-pad text-center">
+                    <h6  style="word-wrap: break-word; color:black;">APPRECIATIONS</h6>
+                    <h4 id="likes-{{user_profile.user.id}}">{{likes_by_users}}</h4>
+                </div>
+            </div>
+          </div>
+          <div class="col-md-1 user-menu-btns">
+              <div class="btn-group-vertical square" id="responsive">
+                  <a href="#" class="btn btn-block btn-default active  ">
+                    <i class="fa fa-bell-o fa-3x text-center small">Activities</i>
+                  </a>
+                  <a href="#" class="btn btn-default">
+                    <i class="fa fa-envelope-o fa-3x text-center small">Bio</i>
+                  </a>
+                  <a href="#" class="btn btn-default">
+                    <i class="fa fa-cloud-upload fa-3x text-center small">Followers</i>
+                  </a>      
+                   <a href="#" class="btn btn-default">
+                    <i class="fa fa-cloud-upload fa-3x text-center small">Following</i>
+                  </a>                
+                  <a href="#" class="btn btn-default">
+                    <i class="fa fa-cloud-upload fa-3x text-center small">Links</i>
+                  </a>
+              </div>
             </div>
             <div class="col-md-4 user-menu user-pad">
                 <div class="user-menu-content active">
@@ -78,17 +75,13 @@
                         
                       {% endfor %}
                     </ul>
-                </div>
-                
-
-
+                </div>             
                 <div class="user-menu-content">
                     <h3>
                           Bio
                     </h3>
                     <div class="border border-warning pb-5 rounded "><h6>{{user_profile.user.profile.bio}}</h6></div>
-                </div>
-              
+                </div>  
                 <div class="user-menu-content">
                     <h3>
                         Recent Folowers
@@ -97,26 +90,22 @@
                       {% for recent_follower in following_usernames  %}
                         <li>
                             <a href="{% url 'profile-detail' recent_follower.follower.id %}"><h4 style="word-wrap: break-word;"><i class="fa fa-user coral"></i> {{recent_follower.follower.username}}</h4></a>
-                        </li>
-                        
+                        </li>       
                       {% endfor %}
                     </ul>
                 </div>
-
-              <div class="user-menu-content">
-                    <h3>
-                         Following
-                    </h3>
-                    <ul class="user-menu-list">
-                      {% for following_who in followed_usernames  %}
-                        <li>
-                            <a href="{% url 'profile-detail' following_who.followed.id %}"><h4 style="word-wrap: break-word;"><i class="fa fa-user coral"></i> {{following_who.followed.username}}</h4></a>
-                        </li>
-                        
-                      {% endfor %}
-                    </ul>
+                <div class="user-menu-content">
+                      <h3>
+                           Following
+                      </h3>
+                      <ul class="user-menu-list">
+                        {% for following_who in followed_usernames  %}
+                          <li>
+                              <a href="{% url 'profile-detail' following_who.followed.id %}"><h4 style="word-wrap: break-word;"><i class="fa fa-user coral"></i> {{following_who.followed.username}}</h4></a>
+                          </li>
+                        {% endfor %}
+                      </ul>
                 </div>
-
                 <div class="user-menu-content">
                     <h2 class="text-center">
                         SHARE THE LOVE
@@ -125,13 +114,13 @@
                     <div class="share-links">
                       {% if request.user.id != user_profile.user.id %}
                         <center>
-                          <button type="button" class="btn btn-lg btn-labeled btn-success" onclick="follow({{user_profile.user.id}})"  style="margin-bottom: 15px;">
+                          <button type="button" class="btn btn-lg btn-labeled btn-success w-100" onclick="follow({{user_profile.user.id}})"  style="margin-bottom: 15px;">
                                 <span class="btn-label"><i class="fa fa-bell-o"></i></span>FOLLOW
                         </buttonsss>
-                      </center>
+                        </center>
                       {% endif %}
                         <center>
-                          <button type="button" class="btn btn-lg btn-labeled btn-warning" onclick="like({{user_profile.user.id}})">
+                          <button type="button" class="btn btn-lg btn-labeled btn-warning w-100 text-center" onclick="like({{user_profile.user.id}})">
                                 <span class="btn-label"><i class="fa fa-bell-o"></i></span>APPRECIATE
                           </button>
                         </center>
@@ -140,50 +129,49 @@
             </div>
         </div>
       </div>
-      
-    <div id="accordion" >
-            <div class="card" >
-              <div class="card-header" id="headingOne">
-                <h5 class="mb-0">
-                  <button class="btn btn-primary btn-lg btn-block" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    Events Made By {{user_profile.user.username}}
-                  </button>
-                </h5>
-              </div>
-              <div id="collapseOne" class="collapse " aria-labelledby="headingOne" data-parent="#accordion">
-                <div class="table-responsive">
-                  <table class="table table-striped"> 
-                    <tr>
-                      <th>Name</th>
-                      <th>Description</th>
-                      <th>Date</th>
-                      <th>Seats</th>
-                      <th></th>
-                      <th></th>
-                    </tr>
-                   {% for event in events%}
-                    <tr>
-                      <td>{{event.title}}</td>
-                      <td>{{event.description}}</td>
-                      <td>{{event.date}}</td>
-                      <td>{{event.seats}}</td>
-                      {%if request.user == event.organizer  %}
-                        <td><a href="{% url 'event-detail' event.id  %}" class="btn btn-outline-light">Details</a></td>
-                         <td><a href="{% url 'event-edit' event.id  %}" class="btn btn-outline-light">Edit event</a></td>
-                       {% else %}
-                       <td><a href="{% url 'event-booked' event.id  %}" class="btn btn-outline-light">Book event</a></td>
-                      {%endif%}
-                    </tr>
-                  {%endfor%}
-                </table>
+      <!--EVENTS BY THE USER-->
+      <div id="accordion" >
+              <div class="card" >
+                <div class="card-header" id="headingOne">
+                  <h5 class="mb-0">
+                    <button class="btn btn-primary btn-lg btn-block" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      Events Made By {{user_profile.user.username}}
+                    </button>
+                  </h5>
+                </div>
+                <div id="collapseOne" class="collapse " aria-labelledby="headingOne" data-parent="#accordion">
+                  <div class="table-responsive">
+                    <table class="table table-striped"> 
+                      <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Date</th>
+                        <th>Seats</th>
+                        <th></th>
+                        <th></th>
+                      </tr>
+                     {% for event in events%}
+                      <tr>
+                        <td>{{event.title}}</td>
+                        <td>{{event.description}}</td>
+                        <td>{{event.date}}</td>
+                        <td>{{event.seats}}</td>
+                        {%if request.user == event.organizer  %}
+                          <td><a href="{% url 'event-detail' event.id  %}" class="btn btn-outline-light">Details</a></td>
+                           <td><a href="{% url 'event-edit' event.id  %}" class="btn btn-outline-light">Edit event</a></td>
+                         {% else %}
+                          <td><a href="{% url 'event-booked' event.id  %}" class="btn btn-outline-light">Book event</a></td>
+                         {%endif%}
+                      </tr>
+                     {%endfor%}
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-    </div>
-  </div>
-
-</header>
+        </div>
+    </header>
 
 <script type="text/javascript">
     function follow(user_id){
